@@ -113,11 +113,11 @@ func TestWrapEach(t *testing.T) {
 
 func TestWrapWithSep(t *testing.T) {
 	t.Parallel()
-	got := WrapWith("[", "]", ",", 1, 2, 3)
+	got := WrapWith(",", "[", "]", 1, 2, 3)
 	if got != "[1,2,3]" {
 		t.Fatalf("WrapWith: %q", got)
 	}
-	got = WrapWith("<", ">", " | ", "a", "b")
+	got = WrapWith(" | ", "<", ">", "a", "b")
 	if got != "<a | b>" {
 		t.Fatalf("WrapWith 2: %q", got)
 	}
@@ -133,11 +133,11 @@ func TestBetween(t *testing.T) {
 
 func TestPrefixSuffix(t *testing.T) {
 	t.Parallel()
-	if got := PrefixWith("P:", " ", 1, 2); got != "P: 1 2" {
+	if got := PrefixWith(" ", "P:", 1, 2); got != "P: 1 2" {
 		t.Fatalf("Prefix: %q", got)
 	}
 
-	if got := SuffixWith(":S", " ", 1, 2); got != "1 2 :S" {
+	if got := SuffixWith(" ", ":S", 1, 2); got != "1 2 :S" {
 		t.Fatalf("Suffix: %q", got)
 	}
 
@@ -345,7 +345,7 @@ func TestAppendFunctions(t *testing.T) {
 	}
 
 	dst2 := []byte("start")
-	got2 := AppendWith(dst2, " ", "more", 2)
+	got2 := AppendWith(" ", dst2, "more", 2)
 	// The function correctly produces "start" + "more 2". The test must expect this.
 	expected := "startmore 2"
 	if string(got2) != expected {

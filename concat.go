@@ -10,7 +10,7 @@ import "strings"
 // Benefits from Builder pooling if enabled.
 // Useful for building byte slices incrementally without separators.
 func Append(dst []byte, args ...any) []byte {
-	return AppendWith(dst, empty, args...)
+	return AppendWith(empty, dst, args...)
 }
 
 // AppendWith appends args to dst and returns the grown slice.
@@ -19,7 +19,7 @@ func Append(dst []byte, args ...any) []byte {
 // Preallocates based on a size estimate including separators.
 // Benefits from Builder pooling if enabled.
 // Useful for building byte slices incrementally with custom separators.
-func AppendWith(dst []byte, sep string, args ...any) []byte {
+func AppendWith(sep string, dst []byte, args ...any) []byte {
 	if len(args) == 0 {
 		return dst
 	}
@@ -257,13 +257,13 @@ func Path(args ...any) string { return With(slash, args...) }
 // Prefix concatenates with a prefix (no separator).
 // Equivalent to PrefixWith with empty sep.
 func Prefix(p any, args ...any) string {
-	return PrefixWith(p, empty, args...)
+	return PrefixWith(empty, p, args...)
 }
 
 // PrefixWith concatenates with a prefix and separator.
 // Adds p, then sep (if args present and sep not empty), then joins args with sep.
 // Uses pooled Builder if enabled.
-func PrefixWith(p any, sep string, args ...any) string {
+func PrefixWith(sep string, p any, args ...any) string {
 	b := New(sep)
 	b.Grow(estimateWith(sep, args) + estimate([]any{p}))
 	b.Add(p)
@@ -370,13 +370,13 @@ func Space(args ...any) string { return With(space, args...) }
 // Suffix concatenates with a suffix (no separator).
 // Equivalent to SuffixWith with empty sep.
 func Suffix(s any, args ...any) string {
-	return SuffixWith(s, empty, args...)
+	return SuffixWith(empty, s, args...)
 }
 
 // SuffixWith concatenates with a suffix and separator.
 // Joins args with sep, then adds sep (if args present and sep not empty), then s.
 // Uses pooled Builder if enabled.
-func SuffixWith(s any, sep string, args ...any) string {
+func SuffixWith(sep string, s any, args ...any) string {
 	b := New(sep)
 	b.Grow(estimateWith(sep, args) + estimate([]any{s}))
 	b.Add(args...)
@@ -507,7 +507,7 @@ func WrapEach(before, after string, args ...any) string {
 // If no args, returns before + after.
 // Builds inner with With(sep, args...), then Concat(before, inner, after).
 // Benefits from pooling via With and Concat.
-func WrapWith(before, after, sep string, args ...any) string {
+func WrapWith(sep, before, after string, args ...any) string {
 	if len(args) == 0 {
 		return before + after
 	}
