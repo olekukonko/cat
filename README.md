@@ -158,5 +158,11 @@ func JSONPretty(v any) string {
 }
 ```
 
+```text
+/\_/\
+( o.o )  > Concatenate with purr-fection!
+> ^ <
+
+```
 
 **`cat`** - Because life's too short for ugly string building code. 😻
