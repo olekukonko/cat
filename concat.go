@@ -1,6 +1,9 @@
 package cat
 
-import "strings"
+import (
+	"reflect"
+	"strings"
+)
 
 // Append appends args to dst and returns the grown slice.
 // Callers can reuse dst across calls to amortize allocs.
@@ -361,6 +364,21 @@ func RepeatWith(sep string, val any, n int) string {
 		b.Add(val)
 	}
 	return b.Output()
+}
+
+// Reflect converts a reflect.Value to its string representation.
+// It handles all kinds of reflected values including primitives, structs, slices, maps, etc.
+// For nil values, it returns the nilString constant ("<nil>").
+// For unexported or inaccessible fields, it returns unexportedString ("<?>").
+// The output follows Go's syntax conventions where applicable (e.g., slices as [a, b], maps as {k:v}).
+func Reflect(r reflect.Value) string {
+	if !r.IsValid() {
+		return nilString
+	}
+
+	var b strings.Builder
+	writeReflect(&b, r.Interface(), 0)
+	return b.String()
 }
 
 // Space concatenates arguments with space separators.
