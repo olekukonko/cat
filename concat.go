@@ -385,6 +385,10 @@ func Reflect(r reflect.Value) string {
 // Convenience for With using " " as separator.
 func Space(args ...any) string { return With(space, args...) }
 
+// Dot concatenates arguments with dot separators.
+// Convenience for With using " " as separator.
+func Dot(args ...any) string { return With(dot, args...) }
+
 // Suffix concatenates with a suffix (no separator).
 // Equivalent to SuffixWith with empty sep.
 func Suffix(s any, args ...any) string {
