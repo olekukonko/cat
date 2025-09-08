@@ -122,3 +122,77 @@ func (b *Builder) Release() {
 		builderPool.Put(b)
 	}
 }
+
+// On adds a SQL ON clause comparing two columns across tables.
+// Formats as: "table1.column1 = table2.column2" with proper spacing.
+// Useful in JOIN conditions to match keys between tables.
+// Chains, returning the Builder for fluent use.
+func (b *Builder) On(table1, column1, table2, column2 string) *Builder {
+	return b.Add(
+		With(dot, table1, column1),
+		Pad(equal),
+		With(dot, table2, column2),
+	)
+}
+
+// Using adds a SQL condition comparing two aliased columns.
+// Formats as: "alias1.column1 = alias2.column2" for JOINs or filters.
+// Helps when working with table aliases in complex queries.
+// Chains, returning the Builder for fluent use.
+func (b *Builder) Using(alias1, column1, alias2, column2 string) *Builder {
+	return b.Add(
+		With(dot, alias1, column1),
+		Pad(equal),
+		With(dot, alias2, column2),
+	)
+}
+
+// And adds the AND operator with proper spacing.
+// Ensures clean SQL output by adding " AND " between conditions.
+// Chains, returning the Builder for fluent use.
+func (b *Builder) And() *Builder {
+	return b.Add(Pad(and))
+}
+
+// Pad surrounds a string with spaces on both sides and adds it to the builder.
+// Ensures proper spacing for SQL operators like "=", "AND", etc.
+// Example: b.Pad("=") adds " = " for cleaner formatting.
+// Chains, returning the Builder for fluent use.
+func (b *Builder) Pad(s string) *Builder {
+	return b.Add(Concat(space, s, space))
+}
+
+// PadWith adds a separator before the string and a space after it.
+// Useful for formatting SQL parts with custom leading separators.
+// Example: b.PadWith(",", "column") adds ",column ".
+// Chains, returning the Builder for fluent use.
+func (b *Builder) PadWith(sep, s string) *Builder {
+	return b.Add(Concat(sep, s, space))
+}
+
+// In adds a SQL IN clause with properly quoted values
+// Example: b.In("status", "active", "pending") → adds "status IN ('active', 'pending')"
+func (b *Builder) In(column string, values ...string) *Builder {
+	if len(values) == 0 {
+		return b.Add(column, " IN ()")
+	}
+
+	quotedValues := make([]string, len(values))
+	for i, v := range values {
+		quotedValues[i] = "'" + v + "'"
+	}
+	return b.Add(column, " IN (", JoinWith(comma+space, quotedValues...), ")")
+}
+
+// Parens wraps the current builder content in parentheses
+// Useful for grouping conditions in SQL queries
+// Example: b.Add("a = b").And().Add("c = d").Parens() → "(a = b AND c = d)"
+func (b *Builder) Parens() *Builder {
+	current := b.String()
+	b.buf.Reset()
+	b.buf.WriteString("(")
+	b.buf.WriteString(current)
+	b.buf.WriteString(")")
+	b.needsSep = true // Reset separator state since we've modified the content
+	return b
+}

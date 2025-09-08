@@ -14,12 +14,14 @@ import (
 // as well as limits like recursion depth. Defining them as constants allows for compile-time
 // optimizations, readability, and consistent usage in functions like Space, Path, CSV, and reflection handlers.
 const (
-	empty   = ""   // Empty string constant, used for checks and defaults.
-	space   = " "  // Single space, default separator.
-	slash   = "/"  // Forward slash, for paths.
-	dot     = "."  // Period, for extensions or decimals.
-	comma   = ","  // Comma, for CSV or lists.
-	newline = "\n" // Newline, for multi-line strings.
+	empty   = ""    // Empty string constant, used for checks and defaults.
+	space   = " "   // Single space, default separator.
+	slash   = "/"   // Forward slash, for paths.
+	dot     = "."   // Period, for extensions or decimals.
+	comma   = ","   // Comma, for CSV or lists.
+	equal   = "="   // Comma, for CSV or lists.
+	and     = "AND" // Comma, for CSV or lists.
+	newline = "\n"  // Newline, for multi-line strings.
 
 	maxRecursionDepth = 32      // Maximum recursion depth for nested structure handling to prevent stack overflow in reflection-based conversions.
 	nilString         = "<nil>" // String representation for nil values in output.
