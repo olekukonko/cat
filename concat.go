@@ -547,35 +547,6 @@ func WrapWith(sep, before, after string, args ...any) string {
 	return b.Output()
 }
 
-// On builds a SQL ON clause comparing two columns across tables.
-// Formats as: "table1.column1 = table2.column2" with proper spacing.
-// Useful in JOIN conditions to match keys between tables.
-func On(table1, column1, table2, column2 string) string {
-	return With(space,
-		With(dot, table1, column1),
-		Pad(equal),
-		With(dot, table2, column2),
-	)
-}
-
-// Using builds a SQL condition comparing two aliased columns.
-// Formats as: "alias1.column1 = alias2.column2" for JOINs or filters.
-// Helps when working with table aliases in complex queries.
-func Using(alias1, column1, alias2, column2 string) string {
-	return With(space,
-		With(dot, alias1, column1),
-		Pad(equal),
-		With(dot, alias2, column2),
-	)
-}
-
-// And joins multiple SQL conditions with the AND operator.
-// Adds spacing to ensure clean SQL output (e.g., "cond1 AND cond2").
-// Accepts variadic arguments for flexible condition chaining.
-func And(conditions ...any) string {
-	return With(Pad(and), conditions...)
-}
-
 // Pad surrounds a string with spaces on both sides.
 // Ensures proper spacing for SQL operators like "=", "AND", etc.
 // Example: Pad("=") returns " = " for cleaner formatting.
@@ -590,30 +561,15 @@ func PadWith(sep, s string) string {
 	return Concat(sep, s, space)
 }
 
-// In creates a SQL IN clause with properly quoted values
-// Example: In("status", "active", "pending") → "status IN ('active', 'pending')"
-// Handles value quoting and comma separation automatically
-func In(column string, values ...string) string {
-	if len(values) == 0 {
-		return Concat(column, " IN ()")
-	}
-
-	quotedValues := make([]string, len(values))
-	for i, v := range values {
-		quotedValues[i] = "'" + v + "'"
-	}
-	return Concat(column, " IN (", JoinWith(comma+space, quotedValues...), ")")
-}
-
 // Parens wraps content in parentheses
 // Useful for grouping SQL conditions or expressions
 // Example: Parens("a = b AND c = d") → "(a = b AND c = d)"
 func Parens(content string) string {
-	return Concat("(", content, ")")
+	return Concat(parenOpen, content, parenClose)
 }
 
 // ParensWith wraps multiple arguments in parentheses with a separator
 // Example: ParensWith(" AND ", "a = b", "c = d") → "(a = b AND c = d)"
 func ParensWith(sep string, args ...any) string {
-	return Concat("(", With(sep, args...), ")")
+	return Concat(parenOpen, With(sep, args...), parenClose)
 }
